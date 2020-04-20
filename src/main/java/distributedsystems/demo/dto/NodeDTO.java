@@ -17,4 +17,12 @@ public class NodeDTO {
 
     @NotEmpty
     private String ip;
+
+    public String getName() {
+        return name;
+    }
+
+    public String getIp() {
+        return ip;
+    }
 }
