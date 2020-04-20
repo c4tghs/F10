@@ -17,6 +17,8 @@ public class Node {
     private List<File> files;
     private Node nextNode;
     private Node previousNode;
+    private int nextId;
+    private int prevId;
     private MulticastReceiver multicastReceiver;
     private MessagePublisher messagePublisher;
 
@@ -38,14 +40,14 @@ public class Node {
         InetAddress inetAddress = multicastReceiver.getInetAddress();
         int hash = generateHash(receivedName);
         if (id < hash && hash < nextNode.getId()) {
-//            int nextId = hash;
+            nextId = hash;
             try {
                 messagePublisher.unicast(String.valueOf(hash), String.valueOf(inetAddress));
             } catch (IOException e) {
                 e.printStackTrace();
             }
         } else if (previousNode.getId() < hash && hash < id) {
-//            int prevId = hash;
+            prevId = hash;
             try {
                 messagePublisher.unicast(String.valueOf(hash), String.valueOf(inetAddress));
             } catch (IOException e) {
@@ -88,5 +90,13 @@ public class Node {
 
     public void setPreviousNode(Node previousNode) {
         this.previousNode = previousNode;
+    }
+
+    public int getNextId() {
+        return nextId;
+    }
+
+    public int getPrevId() {
+        return prevId;
     }
 }
