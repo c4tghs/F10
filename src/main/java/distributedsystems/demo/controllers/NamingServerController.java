@@ -30,13 +30,13 @@ public class NamingServerController {
         return namingServer.findFile(name);
     }
 
+
     @PostMapping("/add")
     public int addNode(@RequestBody NodeDTO nodeDTO) {
         Node node = new Node(nodeDTO.getName(), nodeDTO.getIp());
         namingServer.addNode(node);
         return namingServer.getSize();
     }
-
 
 
 }
