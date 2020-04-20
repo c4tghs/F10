@@ -1,6 +1,7 @@
 package distributedsystems.demo.model;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,15 +12,22 @@ import java.util.List;
 public class Node {
     private String name;
     private String ip;
+
     private List<File> files;
+
     private Node nextNode;
     private Node previousNode;
+
+    private MulticastPublisher publisher;
 
 
     public Node(String name,String ip) {
         this.name = name;
         this.ip = ip;
         files = new ArrayList();
+        nextNode = null;
+        previousNode = null;
+        publisher = new MulticastPublisher();
 
     }
 
@@ -45,5 +53,10 @@ public class Node {
 
     public void setPreviousNode(Node previousNode) {
         this.previousNode = previousNode;
+    }
+
+    public void discover(String address) throws IOException {
+        String message = String.format("Hey, I am %s with ip: %s", name, ip);
+        publisher.multicast(message, address);
     }
 }

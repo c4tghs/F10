@@ -6,7 +6,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.util.Map;
 
-public class MulticatPublisher {
+public class MulticastPublisher {
     private DatagramSocket socket;
     private InetAddress group;
     private byte[] buf;

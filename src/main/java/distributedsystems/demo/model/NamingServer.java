@@ -55,4 +55,8 @@ public class NamingServer {
 
         return nodes.get(tmpId);
     }
+
+    public int getSize() {
+        return nodes.size();
+    }
 }
