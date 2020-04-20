@@ -8,23 +8,32 @@ import java.net.MulticastSocket;
 public class MulticastReceiver extends Thread {
     protected MulticastSocket socket = null;
     protected byte[] buf = new byte[256];
+    private String received;
+    private InetAddress inetAddress;
 
     public void multiReceiver(String multiCastAddress, int port) {
         try {
             socket = new MulticastSocket(port);
             InetAddress group = InetAddress.getByName(multiCastAddress);
             socket.joinGroup(group);
-            while (true) {
-                DatagramPacket packet = new DatagramPacket(buf, buf.length);
+            DatagramPacket packet = new DatagramPacket(buf, buf.length);
+//            while (packet.getData() == null) {
                 socket.receive(packet);
-                System.out.write(packet.getData(),0,packet.getLength());
-                String received = new String(packet.getData(), 0, packet.getLength());
-                if ("end".equals(received)) break;
-            }
+                inetAddress = packet.getAddress();
+                received = new String(packet.getData(), 0, packet.getLength());
+//            }
             socket.leaveGroup(group);
             socket.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public String getReceived() {
+        return received;
+    }
+
+    public InetAddress getInetAddress() {
+        return inetAddress;
     }
 }

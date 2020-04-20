@@ -29,7 +29,4 @@ public class NamingServerController {
         namingServer.addNode(node);
         return namingServer.findFile(name);
     }
-
-
-
 }
