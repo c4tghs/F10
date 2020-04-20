@@ -2,7 +2,9 @@ package distributedsystems.demo.model;
 
 import java.io.File;
 import java.io.IOException;
+
 import java.net.InetAddress;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,10 +15,14 @@ import java.util.List;
 public class Node {
     private String name;
     private String ip;
+
     private int id;
+  
     private List<File> files;
+
     private Node nextNode;
     private Node previousNode;
+
     private int nextId;
     private int prevId;
     private MulticastReceiver multicastReceiver;
@@ -27,13 +33,17 @@ public class Node {
         this.ip = ip;
         id = generateHash(name);
         files = new ArrayList();
+        nextNode = null;
+        previousNode = null;
         multicastReceiver = new MulticastReceiver();
         messagePublisher = new MessagePublisher();
     }
+  
     private int generateHash(String name) {
         int hashcode = name.hashCode() % 32768;
         return hashcode;
     }
+  
     public void receiveMessage(String multicastAddress, int port) {
         multicastReceiver.multiReceiver(multicastAddress, port);
         String receivedName = multicastReceiver.getReceived();
@@ -55,6 +65,7 @@ public class Node {
             }
         }
     }
+
 
     public int getId() {
         return id;
@@ -92,11 +103,17 @@ public class Node {
         this.previousNode = previousNode;
     }
 
+    public void discover(String address) throws IOException {
+        String message = String.format("Hey, I am %s with ip: %s", name, ip);
+        messagePublisher.multicast(message, address);
+    }
+      
     public int getNextId() {
         return nextId;
     }
 
     public int getPrevId() {
         return prevId;
+
     }
 }
