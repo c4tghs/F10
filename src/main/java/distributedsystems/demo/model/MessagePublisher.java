@@ -22,9 +22,9 @@ public class MessagePublisher {
         socket.close();
     }
 
-    public void unicast(String message, String unicast) throws IOException {
+    public void unicast(String message, String unicastAddress) throws IOException {
         socket = new DatagramSocket();
-        group = InetAddress.getByName(unicast);
+        group = InetAddress.getByName(unicastAddress);
         buf = message.getBytes();
 
         System.out.println(message);

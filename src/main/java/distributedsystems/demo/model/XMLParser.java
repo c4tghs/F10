@@ -37,7 +37,6 @@ public class XMLParser {
             newServer.appendChild(port);
 
             root.appendChild(newServer);
-//            }
 
             DOMSource source = new DOMSource(document);
 

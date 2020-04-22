@@ -15,6 +15,10 @@ public class NamingServer {
     }
 
     public void addNode(Node node) {
+        if (getSize() < 1) {
+            node.setPrevId(node.getId());
+            node.setNextId(node.getId());
+        }
         nodes.put(generateHash(node.getName()), node.getIp());
     }
 

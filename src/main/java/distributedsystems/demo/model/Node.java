@@ -94,13 +94,24 @@ public class Node {
         String message = String.format("Hey, I am %s with ip: %s", name, ip);
         messagePublisher.multicast(message, address);
     }
-      
+    public void shutdown(String address) throws IOException {
+        String nid = String.valueOf(nextId);
+        
+        messagePublisher.unicast(nid, "");
+    }
     public int getNextId() {
         return nextId;
     }
 
     public int getPrevId() {
         return prevId;
+    }
 
+    public void setNextId(int nextId) {
+        this.nextId = nextId;
+    }
+
+    public void setPrevId(int prevId) {
+        this.prevId = prevId;
     }
 }

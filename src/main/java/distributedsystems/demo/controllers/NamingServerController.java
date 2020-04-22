@@ -1,13 +1,11 @@
 package distributedsystems.demo.controllers;
 
 import distributedsystems.demo.dto.NodeDTO;
-import distributedsystems.demo.model.MulticastPublisher;
 import distributedsystems.demo.model.NamingServer;
 import distributedsystems.demo.model.Node;
 import distributedsystems.demo.model.XMLParser;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -47,6 +45,11 @@ public class NamingServerController {
     public HashMap getNodes()
     {
         return namingServer.getNodes();
+    }
+    @GetMapping("/node/{id}")
+    public String getNodeById(int id) {
+        HashMap<Integer, String> nodes = namingServer.getNodes();
+        return nodes.get(id);
     }
     @PostMapping("/add")
     public HashMap addNode(@RequestBody Map<String,String> body)
