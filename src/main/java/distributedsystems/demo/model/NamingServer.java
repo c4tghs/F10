@@ -18,8 +18,9 @@ public class NamingServer {
         nodes.put(generateHash(node.getName()), node.getIp());
     }
 
-    public void removeNode(Node node) {
-        nodes.remove(generateHash(node.getName()));
+    public void removeNode(int id) {
+
+        nodes.remove(id);
     }
 
     private int generateHash(String name) {
@@ -28,7 +29,10 @@ public class NamingServer {
         return hashcode;
 
     }
-
+    public HashMap getNodes()
+    {
+        return nodes;
+    }
     public void printAllnodes() {
         for (Map.Entry<Integer, String> entry : nodes.entrySet()) {
             System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
