@@ -18,26 +18,32 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 public class XMLParser {
-    public void addToXML(String id, String nn) {
+    public void addToXML(Node node) {
         try {
             DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
             Document document = documentBuilder.parse("./maps.xml");
             Element root = document.getDocumentElement();
-            Node node = new Node(id, nn);
 
             Element newServer = document.createElement("map");
 
-            Element name = document.createElement("name");
-            name.appendChild(document.createTextNode(node.getName()));
-            newServer.appendChild(name);
+            Element nameElement = document.createElement("name");
+            nameElement.appendChild(document.createTextNode(node.getName()));
+            newServer.appendChild(nameElement);
 
-            Element port = document.createElement("ip");
-            port.appendChild(document.createTextNode(node.getIp()));
-            newServer.appendChild(port);
+            Element ipElement = document.createElement("ip");
+            ipElement.appendChild(document.createTextNode(node.getIp()));
+            newServer.appendChild(ipElement);
+
+            Element previousIdElement = document.createElement("previousId");
+            previousIdElement.appendChild(document.createTextNode(String.valueOf(node.getPrevHash())));
+            newServer.appendChild(previousIdElement);
+
+            Element nextIdElement = document.createElement("nextId");
+            nextIdElement.appendChild(document.createTextNode(String.valueOf(node.getNextHash())));
+            newServer.appendChild(nextIdElement);
 
             root.appendChild(newServer);
-//            }
 
             DOMSource source = new DOMSource(document);
 
@@ -57,4 +63,5 @@ public class XMLParser {
             e.printStackTrace();
         }
     }
+
 }

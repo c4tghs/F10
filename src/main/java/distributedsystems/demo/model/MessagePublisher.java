@@ -27,7 +27,6 @@ public class MessagePublisher {
         group = InetAddress.getByName(unicast);
         buf = message.getBytes();
 
-        System.out.println(message);
         DatagramPacket packet
                 = new DatagramPacket(buf, buf.length, group, 4446);
         socket.send(packet);

@@ -1,5 +1,8 @@
 package distributedsystems.demo.model;
 
+import com.squareup.okhttp.*;
+import lombok.Data;
+
 import java.io.File;
 import java.io.IOException;
 
@@ -7,100 +10,115 @@ import java.net.InetAddress;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * @author Thomas Somers
  * @version 1.0 26/03/2020 9:54
  */
+
+@Data
 public class Node {
     private String name;
     private String ip;
 
-    private int id;
-  
-    private List<File> files;
+    private int nextHash;
+    private int prevHash;
 
-    private int nextId;
-    private int prevId;
+    private static String multicastAddress = "12.12.12.12";//TODO: multicast instellen
+
+    private Map<String, List<File>> files;
+
+    private OkHttpClient okHttpClient;
     private MulticastReceiver multicastReceiver;
     private MessagePublisher messagePublisher;
 
-    public Node(String name,String ip) {
+
+    public Node(String name, String ip) {
         this.name = name;
         this.ip = ip;
-        id = generateHash(name);
-        files = new ArrayList();
+        files = new TreeMap<>(); //TODO : soort map nakijken + add/remove file
+        okHttpClient = new OkHttpClient();
         multicastReceiver = new MulticastReceiver();
         messagePublisher = new MessagePublisher();
+
+        bootstrapMulticast();
     }
-  
+
+    public String findFile(String fileName) {
+        String ip = "";
+
+        Request request = new Request.Builder()
+                .url("http://localhost:8080/findFile/" + fileName)
+                .get()
+                .build();
+
+        try {
+            Response response = okHttpClient.newCall(request).execute();
+            ip = response.body().string();
+        } catch (IOException e) {
+            System.out.println("Findfile niet gelukt!");
+        }
+
+        return ip;
+    }
+
     private int generateHash(String name) {
-        int hashcode = name.hashCode() % 32768;
-        return hashcode;
+        return name.hashCode() % 32768;
     }
-  
+
+    private void bootstrapMulticast() {
+        String message = "Name : " + name + "ip : " + ip;
+        try {
+            messagePublisher.multicast(message,multicastAddress);
+        } catch (IOException e) {
+            System.out.println("Bootstrap initial multicast failed!");
+        }
+    }
+
     public void receiveMessage(String multicastAddress, int port) {
-        multicastReceiver.multiReceiver(multicastAddress, port);
-        String receivedName = multicastReceiver.getReceived();
-        InetAddress inetAddress = multicastReceiver.getInetAddress();
-        int hash = generateHash(receivedName);
-        if (id < hash && hash < nextId) {
-            nextId = hash;
+        multicastReceiver.start();
+        multicastReceiver.setMessage(multicastAddress);
+        multicastReceiver.setPort(port);
+        multicastReceiver.run();
+
+        multicastReceiver.run();
+
+        String message = multicastReceiver.getMessage();
+        InetAddress senderAddress = multicastReceiver.getSenderAddress();
+
+        int senderHash = generateHash(message);
+        int myHash = generateHash(name);
+
+        if (myHash < senderHash && senderHash < nextHash) {
+            nextHash = senderHash;
             try {
-                messagePublisher.unicast(String.valueOf(hash), String.valueOf(inetAddress));
+                //TODO: message bekijken
+                messagePublisher.unicast(String.valueOf(senderHash), String.valueOf(senderAddress));
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        } else if (prevId < hash && hash < id) {
-            prevId = hash;
+        } else if (prevHash < senderHash && senderHash < myHash) {
+            prevHash = senderHash;
             try {
-                messagePublisher.unicast(String.valueOf(hash), String.valueOf(inetAddress));
+                //TODO: message bekijken
+                messagePublisher.unicast(String.valueOf(senderHash), String.valueOf(senderAddress));
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
     }
-
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getIp() {
-        return ip;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void addFile(File file) {
-        files.add(file);
-    }
-
-    public List<File> getFiles() {
-        return files;
-    }
-
     public void discover(String address) throws IOException {
         String message = String.format("Hey, I am %s with ip: %s", name, ip);
         messagePublisher.multicast(message, address);
+        // start replication
+        startReplication();
     }
-      
-    public int getNextId() {
-        return nextId;
-    }
+    public void startReplication() {
+        for (Map.Entry<String,List<File>> entry : files.entrySet()) {
+            int hash = generateHash(entry.getKey());
 
-    public int getPrevId() {
-        return prevId;
-
+        }
     }
 }
