@@ -36,11 +36,11 @@ public class XMLParser {
             newServer.appendChild(ipElement);
 
             Element previousIdElement = document.createElement("previousId");
-            previousIdElement.appendChild(document.createTextNode(String.valueOf(node.getPrevId())));
+            previousIdElement.appendChild(document.createTextNode(String.valueOf(node.getPrevHash())));
             newServer.appendChild(previousIdElement);
 
             Element nextIdElement = document.createElement("nextId");
-            nextIdElement.appendChild(document.createTextNode(String.valueOf(node.getNextId())));
+            nextIdElement.appendChild(document.createTextNode(String.valueOf(node.getNextHash())));
             newServer.appendChild(nextIdElement);
 
             root.appendChild(newServer);
