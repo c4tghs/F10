@@ -3,6 +3,7 @@ package distributedsystems.demo.model;
 import lombok.Data;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -67,14 +68,38 @@ public class NamingServer {
     public void listenToMulticast() {
         multicastReceiver.run();
     }
-
+// TODO: controle op al aanwezige bestanden
     public int replicateFiles(int fileHash) {
+        int hash =0;
+        HashMap<Integer, Integer> smallerNodes = new HashMap<>();
+        HashMap<Integer, Integer> biggerNodes = new HashMap<>();
         for (Map.Entry<Integer, String> node : nodes.entrySet()) {
             if (node.getKey() < fileHash) {
-                // TODO: for 1 node closest to the filehash
+                int diff = fileHash - node.getKey();
+                smallerNodes.put(node.getKey(), diff);
                 return node.getKey();
+            } else if (node.getKey() > fileHash) {
+                int diff = node.getKey() - fileHash;
+                biggerNodes.put(node.getKey(), diff);
             }
         }
-        return 0;
+        if (smallerNodes.size() == 0) {
+            int biggerdiff = 0;
+            for (Map.Entry<Integer, Integer> node : biggerNodes.entrySet()) {
+                if (node.getValue() > biggerdiff) {
+                    biggerdiff = node.getValue();
+                    hash = node.getKey();
+                }
+            }
+            } else {
+            int initdiff = 1000000;
+            for (Map.Entry<Integer, Integer> node : smallerNodes.entrySet()) {
+                if (node.getValue() < initdiff) {
+                    hash = node.getKey();
+                    initdiff = node.getValue();
+                }
+            }
+        }
+        return hash;
     }
 }
