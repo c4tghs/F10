@@ -1,5 +1,6 @@
 package distributedsystems.demo.controllers;
 
+import distributedsystems.demo.dto.HashDTO;
 import distributedsystems.demo.dto.NodeDTO;
 import distributedsystems.demo.model.NamingServer;
 import distributedsystems.demo.model.Node;
@@ -16,8 +17,7 @@ import java.util.Map;
 public class NamingServerController {
 
     private NamingServer namingServer = new NamingServer();
-
-
+    
     @GetMapping("/findFile/{fileName}")
     public String findFile(@PathVariable String fileName) {
         return namingServer.findFile(fileName);
@@ -31,7 +31,7 @@ public class NamingServerController {
         return namingServer.getSize();
     }
     @PostMapping("/file/hash")
-    public void sendFileHash(@RequestBody int hash) {
-//        namingServer
+    public int sendFileHash(@RequestBody HashDTO hashDTO) {
+        return namingServer.replicateFiles(hashDTO.getHash());
     }
 }

@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import static org.apache.logging.log4j.message.MapMessage.MapFormat.JSON;
+
 /**
  * @author Thomas Somers
  * @version 1.0 26/03/2020 9:54
@@ -23,6 +25,7 @@ public class Node {
     private String name;
     private String ip;
 
+    private String serverAddress = "10.0.22.3";
     private int nextHash;
     private int prevHash;
 
@@ -50,7 +53,7 @@ public class Node {
         String ip = "";
 
         Request request = new Request.Builder()
-                .url("http://localhost:8080/findFile/" + fileName)
+                .url(serverAddress + "/findFile/" + fileName)
                 .get()
                 .build();
 
@@ -118,7 +121,18 @@ public class Node {
     public void startReplication() {
         for (Map.Entry<String,List<File>> entry : files.entrySet()) {
             int hash = generateHash(entry.getKey());
-
+            String json = "{\"hash\":" + hash + "}";
+            RequestBody body = RequestBody.create(MediaType.parse("application/json"), json);
+            // IP namingserver:
+            Request request = new Request.Builder()
+                    .url(serverAddress + "/file/hash" + hash)
+                    .post(body)
+                    .build();
+            try {
+                Response response = okHttpClient.newCall(request).execute();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

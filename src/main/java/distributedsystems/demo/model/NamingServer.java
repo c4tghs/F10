@@ -2,7 +2,9 @@ package distributedsystems.demo.model;
 
 import lombok.Data;
 
+import java.io.File;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -47,7 +49,7 @@ public class NamingServer {
 
             if (entry.getKey() < fileHashcode) {
 
-                diffHashcode = fileHashcode- entry.getKey();
+                diffHashcode = fileHashcode - entry.getKey();
                 if (diffHashcode < tmpHashcode) {
                     tmpHashcode = diffHashcode;
                     tmpId = entry.getKey();
@@ -63,8 +65,16 @@ public class NamingServer {
     }
 
     public void listenToMulticast() {
-
         multicastReceiver.run();
+    }
 
+    public int replicateFiles(int fileHash) {
+        for (Map.Entry<Integer, String> node : nodes.entrySet()) {
+            if (node.getKey() < fileHash) {
+                // TODO: for 1 node closest to the filehash
+                return node.getKey();
+            }
+        }
+        return 0;
     }
 }
