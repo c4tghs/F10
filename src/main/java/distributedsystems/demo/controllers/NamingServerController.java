@@ -23,6 +23,11 @@ public class NamingServerController {
         return namingServer.findFile(fileName);
     }
 
+    @GetMapping("/ip/{hash}")
+    public String getHash(@PathVariable int hash) {
+        return namingServer.getNodes().get(hash);
+    }
+
 
     @PostMapping("/add")
     public int addNode(@RequestBody NodeDTO nodeDTO) {

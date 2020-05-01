@@ -69,19 +69,50 @@ public class Node {
     }
 
     private void bootstrapMulticast() {
-        String message = "Name : " + name + "ip : " + ip;
         try {
-            messagePublisher.multicast(message,multicastAddress);
+            messagePublisher.multicast(name,multicastAddress);
         } catch (IOException e) {
             System.out.println("Bootstrap initial multicast failed!");
         }
+
+        //Receive message from namingServer
+        multicastReceiver.setMultiCastAddress(ip);
+        multicastReceiver.setPort(4446);
+
+        multicastReceiver.run();
+
+        String message = multicastReceiver.getMessage();
+
+
+        if (Integer.parseInt(message) == 1) {
+            this.prevHash = generateHash(this.name);
+            this.nextHash = generateHash(this.name);
+
+        } else{
+
+        }
+
     }
 
-    public void receiveMessage(String multicastAddress, int port) {
-        multicastReceiver.start();
-        multicastReceiver.setMessage(multicastAddress);
+    private int getIpFromHash(int hash) {
+        Request requestNext = new Request.Builder()
+                .url("localhost:8080/ip/" + hash)
+                .build();
+
+        try {
+            Response response = okHttpClient.newCall(requestNext).execute();
+
+            return Integer.parseInt(response.body().string());
+        } catch (IOException e) {
+            System.out.println("No response from server: Get ip from hash!");
+        }
+
+        return 0;
+    }
+
+    public void listenToMulticast(String multicastAddress, int port) {
+        multicastReceiver.setMultiCastAddress(multicastAddress);
         multicastReceiver.setPort(port);
-        multicastReceiver.run();
 
         multicastReceiver.run();
 
@@ -109,16 +140,20 @@ public class Node {
             }
         }
     }
+
+
+
+
+
+
+
+
+
+    //?????????
+
     public void discover(String address) throws IOException {
         String message = String.format("Hey, I am %s with ip: %s", name, ip);
         messagePublisher.multicast(message, address);
-        // start replication
-        startReplication();
     }
-    public void startReplication() {
-        for (Map.Entry<String,List<File>> entry : files.entrySet()) {
-            int hash = generateHash(entry.getKey());
 
-        }
-    }
 }
