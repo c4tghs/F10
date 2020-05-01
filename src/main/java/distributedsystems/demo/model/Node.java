@@ -126,7 +126,7 @@ public class Node {
             nextHash = senderHash;
             try {
                 //TODO: message bekijken
-                messagePublisher.unicast(String.valueOf(senderHash), String.valueOf(senderAddress));
+                messagePublisher.unicast(String.valueOf(senderHash), String.valueOf(senderAddress), 1000);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -134,7 +134,7 @@ public class Node {
             prevHash = senderHash;
             try {
                 //TODO: message bekijken
-                messagePublisher.unicast(String.valueOf(senderHash), String.valueOf(senderAddress));
+                messagePublisher.unicast(String.valueOf(senderHash), String.valueOf(senderAddress), 1000);
             } catch (IOException e) {
                 e.printStackTrace();
             }

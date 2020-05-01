@@ -79,7 +79,7 @@ public class NamingServer {
         nodes.put(hash, senderAddress.toString());
 
         try {
-            messagePublisher.unicast(String.valueOf(nodes.size()),senderAddress.toString());
+            messagePublisher.unicast(String.valueOf(nodes.size()),senderAddress.toString(), 1000);
         } catch (IOException e) {
             System.out.println("Failed to send response!");
         }
