@@ -2,6 +2,8 @@ package distributedsystems.demo.model;
 
 import lombok.Data;
 
+import java.io.IOException;
+import java.net.InetAddress;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,11 +18,13 @@ public class NamingServer {
     private XMLParser xmlParser;
 
     private MulticastReceiver multicastReceiver;
+    private MessagePublisher messagePublisher;
 
     public NamingServer() {
         nodes = new HashMap();
         xmlParser = new XMLParser();
         multicastReceiver = new MulticastReceiver();
+        messagePublisher = new MessagePublisher();
     }
 
     private int generateHash(String name) {
@@ -62,9 +66,24 @@ public class NamingServer {
         return nodes.size();
     }
 
-    public void listenToMulticast() {
+    public void listenToMulticast( String multicastAddress, int port) {
+        multicastReceiver.setPort(port);
+        multicastReceiver.setMultiCastAddress(multicastAddress);
 
         multicastReceiver.run();
+
+        String message = multicastReceiver.getMessage(); //Message = name
+        InetAddress senderAddress = multicastReceiver.getSenderAddress();
+
+        int hash = generateHash(message);
+        nodes.put(hash, senderAddress.toString());
+
+        try {
+            messagePublisher.unicast(String.valueOf(nodes.size()),senderAddress.toString());
+        } catch (IOException e) {
+            System.out.println("Failed to send response!");
+        }
+
 
     }
 
