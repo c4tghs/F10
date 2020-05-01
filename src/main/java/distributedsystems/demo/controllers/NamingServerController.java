@@ -35,5 +35,8 @@ public class NamingServerController {
         namingServer.addNode(node);
         return namingServer.getSize();
     }
-
+    @PostMapping("/file/hash")
+    public void sendFileHash(@RequestBody int hash) {
+//        namingServer
+    }
 }

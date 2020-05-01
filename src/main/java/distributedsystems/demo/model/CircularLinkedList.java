@@ -12,10 +12,10 @@ public class CircularLinkedList {
         if (head == null) {
             head = node;
         } else {
-            tail.setNextNode(node);
+//            tail.setNextNode(node);
         }
 
         tail = node;
-        tail.setNextNode(head);
+//        tail.setNextNode(head);
     }
 }

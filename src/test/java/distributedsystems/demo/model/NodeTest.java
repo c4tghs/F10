@@ -14,8 +14,8 @@ class NodeTest {
             Node node = new Node("Node1", "111,111,111,111");
             Node nextNode = new Node("Node2", "111,111,111,112");
             Node previousNode = new Node("Node3", "111,111,111,110");
-            node.setNextNode(nextNode);
-            node.setPreviousNode(previousNode);
+//            node.setNextNode(nextNode);
+//            node.setPreviousNode(previousNode);
             node.receiveMessage("230.0.0.0", 4446);
 //            MessagePublisher multicatPublisher = new MessagePublisher();
 //            multicatPublisher.multicast("hallo daar", "230.0.0.0");
